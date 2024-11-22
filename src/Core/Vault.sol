@@ -33,6 +33,7 @@ contract Vault {
 
 //variable
 address[] public strategies;
+address public usdcAddress; 
 IERC20 public token;
 uint256 public s_totalShares;
 uint256 public s_totalDeposit;
@@ -46,10 +47,14 @@ uint256 constant FEE_PERFORMANCE = 3;
 mapping(address => uint256) userBalance;
 mapping(address => uint256) userShares;
 
-event Deposit(address indexed user, uint256 indexed amount, uint256 indexed sharesToMint)
-constructor(address _tokenAddress) {
-    token = IERC20(_tokenAddress);
+event Deposit(address indexed user, uint256 indexed amount, uint256 indexed sharesToMint);
+event Withdraw(address indexed user , uint256 indexed amountToWithdraw);
+
+constructor(address _usdcAddress) {
+    usdcAddress = _usdcAddress;
+    token = IERC20(_usdcAddress);
     s_totalShares = 0;
+
 }
 
 /**
@@ -71,6 +76,7 @@ constructor(address _tokenAddress) {
 function depositFund(uint256 amount) public payable {
     // Validate deposit amount
     require(amount > 0, 'Deposit amount must be greater than zero');
+    require(address(token) == usdcAddress, "Only USDC is accepted");
     require(token.allowance(msg.sender, address(this)) >= amount, "Insufficient allowance");
 
     // Transfer tokens from the user to the vault
@@ -101,7 +107,35 @@ function depositFund(uint256 amount) public payable {
 }
 
 
-function withdrawFund() public {
+/**
+ * @dev Allows a user to withdraw a specified amount of tokens from the vault.
+ * The amount is based on the user's shares in the vault, and the shares are burned accordingly.
+ * 
+ * @param amountToWithdraw The amount of tokens the user wishes to withdraw from the vault.
+ * Emits a {Withdraw} event upon successful withdrawal.
+ */
+
+function withdrawFund(uint256 amountToWithdraw) public {
+    // Check that the user has shares in the vault
+    require(userShares[msg.sender] > 0 ," there is nothing to withdraw");
+
+     // Calculate the maximum amount that can be withdrawn by the user
+    uint256 maxAmountToWithdraw = (userShares[msg.sender] * s_totalDeposit) / s_totalShares;
+    require(amountToWithdraw <= maxAmountToWithdraw , "insuffisant balance");
+
+    // Calculate the amount of shares to burn based on the requested withdrawal
+    uint256 sharesToBurn = (amountToWithdraw * s_totalShares) /s_totalDeposit;
+
+    // Update the user's shares and the total shares in the vault
+    userShares[msg.sender] -= sharesToBurn;
+    s_totalShares -= sharesToBurn;
+    s_totalDeposit -= amountToWithdraw;
+
+    // Transfer the requested amount to the user
+    bool success = token.transfer(msg.sender, amountToWithdraw);
+    require(success, "token transfert failed"); 
+
+    emit Withdraw(msg.sender, amountToWithdraw);
 
 }
 
