@@ -26,9 +26,11 @@
 
 pragma solidity 0.8.28;
 
-import {IERC20} from "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 
-contract Vault {
+import {IERC20} from "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
+import {AaveStrategy} from "src/Strategy/AaveStrategy.sol";
+
+contract Vault  {
 
 
 //variable
@@ -139,4 +141,25 @@ function withdrawFund(uint256 amountToWithdraw) public {
 
 }
 
+function addStrategy(address strategy) external  {
+    require(strategy != address(0));
+    strategies.push(strategy);
+
+}
+
+function addFundToStrategy(uint256 amount, address strategy)  external {
+    require(amount > 0, 'Deposit amount must be greater than zero');
+    require(strategy != address(0), "Invalid strategy address");
+
+    IERC20(token).approve(strategy,amount);
+    AaveStrategy(strategy).deposit(amount);
+
+    emit Deposit(msg.sender, amount);
+}
+
+function withdrawFundFromStrategy(uint256 amount, address strategy) external { 
+    require(amount > 0, "Amount must be greater than 0");
+    require(strategy != address(0), "Invalid strategy address");
+    AaveStrategy(strategy).withdraw(amount);
+}
 }
