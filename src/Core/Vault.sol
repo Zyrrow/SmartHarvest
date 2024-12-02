@@ -40,12 +40,12 @@ uint256 public s_totalDeposit;
 
 
 //Constant variable
-uint256 constant FEE_PERFORMANCE = 3;
+uint256 constant FEE_PERFORMANCE = 3e18;
 
 
 //mapping
-mapping(address => uint256) userBalance;
-mapping(address => uint256) userShares;
+
+mapping(address => uint256) public userShares;
 
 event Deposit(address indexed user, uint256 indexed amount, uint256 indexed sharesToMint);
 event Withdraw(address indexed user , uint256 indexed amountToWithdraw);
@@ -95,7 +95,7 @@ function depositFund(uint256 amount) public payable {
     }
 
     // Update the user's balance and shares
-    userBalance[msg.sender] += sharesToMint;
+    
     userShares[msg.sender] += sharesToMint;
 
     // Update the total shares and total deposits in the vault
