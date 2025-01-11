@@ -48,9 +48,13 @@ uint256 constant FEE_PERFORMANCE = 3e18;
 //mapping
 
 mapping(address => uint256) public userShares;
+mapping(address => bool) private strategies;
 
 event Deposit(address indexed user, uint256 indexed amount, uint256 indexed sharesToMint);
 event Withdraw(address indexed user , uint256 indexed amountToWithdraw);
+
+
+
 
 constructor(address _usdcAddress) {
     usdcAddress = _usdcAddress;
@@ -141,10 +145,16 @@ function withdrawFund(uint256 amountToWithdraw) public {
 
 }
 
-function addStrategy(address strategy) external  {
+function addStrategy(address strategy) external onlyAdmin  {
     require(strategy != address(0));
-    strategies.push(strategy);
+    require(!strategies[strategy]);
+    strategies[strategy] = true;
 
+}
+
+function removeStrategy(address strategy) external onlyAdmin  {
+    require(stratey != address(0)); 
+    strategies[strategy] = false;
 }
 
 function addFundToStrategy(uint256 amount, address strategy)  external {
