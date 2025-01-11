@@ -6,7 +6,7 @@
 
 The goal of **SmartHarvest** is to create a smart contract-based vault that allows users to deposit tokens and participate in various DeFi strategies while having their funds automatically re-invested to maximize yield. The vault will use performance-based fee structures to ensure that the protocol aligns with user incentives.
 
-Currently, the protocol is still in development and is being built using **Foundry**, a fast and reliable framework for smart contract testing and deployment on Ethereum and Ethereum-compatible networks.
+Currently, the protocol is still in development and  is being built using **Foundry**, a fast and reliable framework for smart contract testing and deployment on Ethereum and Ethereum-compatible networks. At the moment the protocol is on mvp status.
 
 ## Purpose of the Protocol
 
