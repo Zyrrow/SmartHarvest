@@ -1,6 +1,7 @@
 # SmartHarvest - Optimizer Vault
 
-"A Note to Read"
+## A Note to Read
+
 This project is not intended for production use but is developed for learning purposes and personal exploration. The frontend is an approximation designed to provide a visual representation of the application and its functionality. The focus is on gaining experience, testing ideas, and building foundational knowledge in the development of smart contracts and decentralized protocols.
 
 ## Overview
